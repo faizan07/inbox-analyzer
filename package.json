@@ -1,7 +1,7 @@
 {
   "name": "inbox-analyzer",
   "version": "1.0.0",
-  "description": "Gmail Inbox Analyzer — Visual dashboard for understanding inbox composition",
+  "description": "Gmail Mailbox Analyzer — Visual dashboard for understanding inbox composition",
   "private": true,
   "scripts": {
     "dev": "concurrently -k -n server,client -c blue,green \"node server/index.js\" \"npm run dev --prefix client\"",

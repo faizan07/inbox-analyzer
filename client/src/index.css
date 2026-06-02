@@ -85,7 +85,7 @@
   /* Heatmap — Magma palette stops (dark theme) */
   --hm-0: rgba(0, 0, 0, 0);
   --hm-1: #4C1D95;
-  --hm-2: #7C3AED;
+  --hm-2: #9333EA;
   --hm-3: #EC4899;
   --hm-4: #F59E0B;
 
@@ -159,9 +159,9 @@
   /* Heatmap — Magma palette stops (light theme) */
   --hm-0: rgba(0, 0, 0, 0);
   --hm-1: #6366F1;
-  --hm-2: #A855F7;
+  --hm-2: #C026D3;
   --hm-3: #EC4899;
-  --hm-4: #EAB308;
+  --hm-4: #FBBF24;
 
   --canvas-shadow: rgba(0, 0, 0, 0.08);
 
@@ -661,7 +661,19 @@ a:hover {
   transition: border-color var(--transition-slow);
 }
 
-.dashboard-header h1 {
+.header-branding {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.header-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon-title h1 {
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.3px;
@@ -669,6 +681,14 @@ a:hover {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.header-account {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 2px;
+  letter-spacing: -0.2px;
 }
 
 .header-actions {
@@ -1056,7 +1076,7 @@ a:hover {
   width: 100px;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, var(--hm-1), var(--hm-3), var(--hm-4));
+  background: linear-gradient(to right, var(--hm-1), var(--hm-2), var(--hm-3), var(--hm-4));
   transition: background var(--transition-slow);
 }
 

@@ -14,7 +14,7 @@ No test runner, linter, or formatter is configured in this project.
 
 ## Project Overview
 
-**Gmail Inbox Analyzer** — a local web app (v1) that connects to Gmail via OAuth 2.0 and visualizes inbox metadata (senders, categories, activity patterns) with donut/bar charts, a sender leaderboard, and a 24x7 heatmap. Read-only; no email bodies are fetched or stored.
+**Gmail Mailbox Analyzer** — a local web app (v1) that connects to Gmail via OAuth 2.0 and visualizes inbox metadata (senders, categories, activity patterns) with donut/bar charts, a sender leaderboard, and a 24x7 heatmap. Read-only; no email bodies are fetched or stored.
 
 ## Architecture
 

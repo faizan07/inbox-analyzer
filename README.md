@@ -1,4 +1,4 @@
-# Gmail Inbox Analyzer
+# Gmail Mailbox Analyzer
 
 A locally-run web application that connects to your Gmail account via OAuth 2.0 and provides a visual dashboard to understand your inbox composition — which categories dominate, who the top senders are, and when emails arrive.
 
@@ -36,7 +36,7 @@ npm install
    - Go to **APIs & Services** → **Credentials**
    - Click **Create Credentials** → **OAuth 2.0 Client ID**
    - Application type: **Desktop App**
-   - Name: `Gmail Inbox Analyzer` (or any name)
+   - Name: `Gmail Mailbox Analyzer` (or any name)
    - Click **Create**
 5. Download the JSON file
 6. Rename it to `credentials.json` and place it in the project root directory

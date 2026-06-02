@@ -36,8 +36,8 @@ function tryParseColor(str) {
      are translucent (background bleeds through) and high intensities
      are solid/vibrant.                                      */
 const ALPHA_CURVES = {
-  dark:  [0, 0.15, 0.40, 0.75, 1],
-  light: [0, 0.12, 0.30, 0.65, 0.95],
+  dark:  [0, 0.18, 0.45, 0.78, 1],
+  light: [0, 0.14, 0.35, 0.72, 1],
 };
 
 /* ── Component ──────────────────────────────────────────────────── */

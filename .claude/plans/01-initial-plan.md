@@ -1,4 +1,4 @@
-# Gmail Inbox Analyzer — Implementation Plan
+# Gmail Mailbox Analyzer — Implementation Plan
 
 **Date:** 2026-06-02
 **Spec:** `.claude/specs/requirements_spec.md`

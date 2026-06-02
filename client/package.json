@@ -1,7 +1,7 @@
 {
   "name": "inbox-analyzer-client",
   "version": "1.0.0",
-  "description": "React frontend for Gmail Inbox Analyzer",
+  "description": "React frontend for Gmail Mailbox Analyzer",
   "private": true,
   "type": "module",
   "scripts": {

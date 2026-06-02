@@ -54,7 +54,7 @@ function TopSenders({ senders, loading }) {
                   className="sender-bar"
                   style={{
                     width: `${(sender.count / maxCount) * 100}%`,
-                    backgroundColor: CATEGORY_COLORS[sender.category] || '#cccccc',
+                    backgroundColor: (CATEGORY_COLORS[sender.category] || '#cccccc') + 'bb',
                   }}
                 />
               </div>
@@ -63,7 +63,9 @@ function TopSenders({ senders, loading }) {
             <span
               className="sender-category-badge"
               style={{
-                backgroundColor: CATEGORY_COLORS[sender.category] || '#cccccc',
+                backgroundColor: (CATEGORY_COLORS[sender.category] || '#cccccc') + '22',
+                color: CATEGORY_COLORS[sender.category] || '#cccccc',
+                border: `1px solid ${(CATEGORY_COLORS[sender.category] || '#cccccc') + '44'}`,
               }}
             >
               {sender.category}

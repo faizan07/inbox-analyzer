@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './ThemeContext';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import { checkAuth } from './api';
@@ -41,33 +42,35 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            authState === 'authenticated' ? (
-              <Dashboard onLogout={() => setAuthState('unauthenticated')} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            authState === 'authenticated' ? (
-              <Navigate to="/" replace />
-            ) : (
-              <LoginPage
-                authState={authState}
-                onLogin={() => setAuthState('authenticated')}
-              />
-            )
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              authState === 'authenticated' ? (
+                <Dashboard onLogout={() => setAuthState('unauthenticated')} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              authState === 'authenticated' ? (
+                <Navigate to="/" replace />
+              ) : (
+                <LoginPage
+                  authState={authState}
+                  onLogin={() => setAuthState('authenticated')}
+                />
+              )
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

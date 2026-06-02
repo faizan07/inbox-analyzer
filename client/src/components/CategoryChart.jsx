@@ -13,15 +13,15 @@ import { Doughnut, Bar } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 const CATEGORY_COLORS = {
-  Promotions: '#FF6384',
-  Social: '#36A2EB',
-  Updates: '#FFCE56',
-  Forums: '#4BC0C0',
-  Spam: '#9966FF',
-  Primary: '#FF9F40',
+  Promotions: '#f472b6',
+  Social: '#60a5fa',
+  Updates: '#fbbf24',
+  Forums: '#34d399',
+  Spam: '#a78bfa',
+  Primary: '#fb923c',
 };
 
-function CategoryChart({ labels: labelData, loading }) {
+function CategoryChart({ labels: labelData, loading, theme = 'dark' }) {
   if (loading) {
     return (
       <section className="chart-panel category-chart-panel">
@@ -44,9 +44,20 @@ function CategoryChart({ labels: labelData, loading }) {
     );
   }
 
+  const isLight = theme === 'light';
+
   const displayNames = labelData.map((l) => l.displayName);
   const totals = labelData.map((l) => l.total);
-  const colors = labelData.map((l) => CATEGORY_COLORS[l.displayName] || '#cccccc');
+  const colors = labelData.map((l) => CATEGORY_COLORS[l.displayName] || '#666666');
+
+  // Theme-aware chart colors
+  const textColor = isLight ? 'rgba(30, 27, 46, 0.7)' : 'rgba(255, 255, 255, 0.7)';
+  const textColorSecondary = isLight ? 'rgba(30, 27, 46, 0.5)' : 'rgba(255, 255, 255, 0.5)';
+  const textColorTertiary = isLight ? 'rgba(30, 27, 46, 0.35)' : 'rgba(255, 255, 255, 0.35)';
+  const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.04)';
+  const tooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(8, 8, 22, 0.85)';
+  const tooltipText = isLight ? '#1e1b2e' : '#fff';
+  const donutBorder = isLight ? 'rgba(255, 255, 255, 0.8)' : 'rgba(8, 8, 22, 0.6)';
 
   const donutData = {
     labels: displayNames,
@@ -54,8 +65,9 @@ function CategoryChart({ labels: labelData, loading }) {
       {
         data: totals,
         backgroundColor: colors,
-        borderWidth: 1,
-        borderColor: '#ffffff',
+        borderWidth: 2,
+        borderColor: donutBorder,
+        hoverOffset: 8,
       },
     ],
   };
@@ -66,8 +78,10 @@ function CategoryChart({ labels: labelData, loading }) {
       {
         label: 'Message Count',
         data: totals,
-        backgroundColor: colors,
-        borderRadius: 4,
+        backgroundColor: colors.map((c) => c + 'cc'),
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 6,
       },
     ],
   };
@@ -79,12 +93,22 @@ function CategoryChart({ labels: labelData, loading }) {
       legend: {
         position: 'right',
         labels: {
-          padding: 12,
+          padding: 14,
           usePointStyle: true,
-          font: { size: 12 },
+          pointStyle: 'circle',
+          color: textColor,
+          font: { size: 12, family: 'Inter' },
         },
       },
       tooltip: {
+        backgroundColor: tooltipBg,
+        titleColor: tooltipText,
+        bodyColor: tooltipText,
+        titleFont: { family: 'Inter', size: 13 },
+        bodyFont: { family: 'Inter', size: 12 },
+        padding: 12,
+        cornerRadius: 8,
+        boxPadding: 4,
         callbacks: {
           label: function (context) {
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -105,13 +129,40 @@ function CategoryChart({ labels: labelData, loading }) {
       title: {
         display: true,
         text: 'Messages by Category',
-        font: { size: 14 },
+        color: textColor,
+        font: { size: 13, family: 'Inter', weight: '500' },
+      },
+      tooltip: {
+        backgroundColor: tooltipBg,
+        titleColor: tooltipText,
+        bodyColor: tooltipText,
+        titleFont: { family: 'Inter', size: 13 },
+        bodyFont: { family: 'Inter', size: 12 },
+        padding: 12,
+        cornerRadius: 8,
       },
     },
     scales: {
       x: {
         beginAtZero: true,
-        ticks: { precision: 0 },
+        grid: {
+          color: gridColor,
+          drawBorder: false,
+        },
+        ticks: {
+          precision: 0,
+          color: textColorTertiary,
+          font: { family: 'Inter', size: 11 },
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: textColorSecondary,
+          font: { family: 'Inter', size: 12 },
+        },
       },
     },
   };

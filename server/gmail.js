@@ -132,7 +132,7 @@ async function fetchMessages(gmail) {
 
       for (const result of results) {
         if (result.status === 'fulfilled') {
-          messages.push(result.value);
+          messages.push(result.value.data); // Extract .data from response
         } else {
           fetchErrors++;
           if (fetchErrors <= 3) {
@@ -184,7 +184,8 @@ async function fetchSummary(auth) {
   const labelPromises = mappedLabels.map((l) =>
     withRetry(() =>
       gmail.users.labels.get({ userId: 'me', id: l.name })
-    ).catch((err) => {
+    ).then((res) => res.data) // Extract .data from the response
+    .catch((err) => {
       console.error(`[Gmail] Failed to fetch label ${l.name}:`, err.message);
       return null;
     })
@@ -194,8 +195,8 @@ async function fetchSummary(auth) {
   console.log(`[DEBUG] ${labelResults.length} labels fetched individually`);
 
   const labels = labelResults.map((l) => ({
-    name: l.name || l.id,
-    displayName: SYSTEM_LABEL_MAP[l.name || l.id] || l.name || l.id,
+    name: l.name,
+    displayName: SYSTEM_LABEL_MAP[l.name] || l.name,
     total: l.messagesTotal || 0,
     unread: l.messagesUnread || 0,
   }));

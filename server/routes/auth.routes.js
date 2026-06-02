@@ -3,6 +3,16 @@ const router = express.Router();
 const auth = require('../auth');
 const gmail = require('../gmail');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Cookie options: secure only in production (HTTPS), lax in dev for localhost
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'strict' : 'lax',
+  maxAge: 5 * 60 * 1000, // 5 minutes
+};
+
 /**
  * GET /auth/login
  * Initiates the OAuth 2.0 PKCE flow by redirecting to Google's consent screen.
@@ -11,12 +21,7 @@ router.get('/auth/login', (req, res) => {
   try {
     const { url, state } = auth.getAuthUrl();
     // Store state briefly in a cookie so /oauth2callback can retrieve it
-    res.cookie('oauth_state', state, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 5 * 60 * 1000, // 5 minutes
-    });
+    res.cookie('oauth_state', state, cookieOptions);
     res.redirect(url);
   } catch (err) {
     if (err.code === 'CREDENTIALS_MISSING') {
@@ -39,7 +44,7 @@ router.get('/oauth2callback', async (req, res) => {
 
   // Handle user denying the consent
   if (oauthError === 'access_denied') {
-    const redirectUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5173/login?oauth_error=access_denied';
+    const redirectUrl = isProduction ? '/' : 'http://localhost:5173/login?oauth_error=access_denied';
     return res.redirect(redirectUrl);
   }
 
@@ -51,7 +56,7 @@ router.get('/oauth2callback', async (req, res) => {
 
   if (!storedState) {
     // No state cookie — session expired
-    const redirectUrl = process.env.NODE_ENV === 'production'
+    const redirectUrl = isProduction
       ? '/login?oauth_error=session_expired'
       : 'http://localhost:5173/login?oauth_error=session_expired';
     return res.redirect(redirectUrl);
@@ -59,17 +64,21 @@ router.get('/oauth2callback', async (req, res) => {
 
   try {
     await auth.handleCallback(code, storedState);
-    res.clearCookie('oauth_state');
+    res.clearCookie('oauth_state', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'strict' : 'lax',
+    });
 
     // Clear stale cache from any previous session
     gmail.clearCache();
 
     // Redirect to frontend
-    const redirectUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5173/';
+    const redirectUrl = isProduction ? '/' : 'http://localhost:5173/';
     res.redirect(redirectUrl);
   } catch (err) {
     console.error('[OAuth Callback Error]', err.message);
-    const redirectUrl = process.env.NODE_ENV === 'production'
+    const redirectUrl = isProduction
       ? '/login?oauth_error=callback_failed'
       : 'http://localhost:5173/login?oauth_error=callback_failed';
     res.redirect(redirectUrl);

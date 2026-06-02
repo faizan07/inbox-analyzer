@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../auth');
+const gmail = require('../gmail');
 
 /**
  * GET /auth/login
@@ -60,6 +61,9 @@ router.get('/oauth2callback', async (req, res) => {
     await auth.handleCallback(code, storedState);
     res.clearCookie('oauth_state');
 
+    // Clear stale cache from any previous session
+    gmail.clearCache();
+
     // Redirect to frontend
     const redirectUrl = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5173/';
     res.redirect(redirectUrl);
@@ -99,6 +103,7 @@ router.get('/auth/status', (req, res) => {
 router.post('/auth/logout', async (req, res) => {
   try {
     await auth.logout();
+    gmail.clearCache();
     res.json({ success: true });
   } catch (err) {
     console.error('[Logout Error]', err.message);

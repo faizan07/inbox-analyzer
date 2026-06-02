@@ -368,11 +368,25 @@ async function getCachedOrFetch(key, fetchFn, auth) {
   return cache._promises[key];
 }
 
+/**
+ * Clear all cached data. Called on logout / new login to prevent
+ * serving stale data from a previous account.
+ */
+function clearCache() {
+  cache.summary = { data: null, fetchedAt: null };
+  cache.senders = { data: null, fetchedAt: null };
+  cache.heatmap = { data: null, fetchedAt: null };
+  cache._messages = null;
+  cache._messagesPromise = null;
+  cache._promises = {};
+}
+
 module.exports = {
   fetchSummary: (auth) => getCachedOrFetch('summary', fetchSummary, auth),
   fetchSenders: (auth) => getCachedOrFetch('senders', fetchSenders, auth),
   fetchHeatmap: (auth) => getCachedOrFetch('heatmap', fetchHeatmap, auth),
   refreshData,
   getLastFetched,
+  clearCache,
   CATEGORY_COLORS,
 };

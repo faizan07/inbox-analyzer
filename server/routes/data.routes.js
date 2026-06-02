@@ -89,6 +89,22 @@ router.get('/refresh', async (req, res) => {
 });
 
 /**
+ * GET /api/profile
+ * Returns the authenticated user's Gmail profile info (email address).
+ */
+router.get('/profile', async (req, res) => {
+  try {
+    const { google } = require('googleapis');
+    const gmailClient = google.gmail({ version: 'v1', auth: req.auth });
+    const profile = await gmailClient.users.getProfile({ userId: 'me' });
+    res.json({ emailAddress: profile.data.emailAddress });
+  } catch (err) {
+    console.error('[Profile Error]', err.message);
+    res.status(500).json({ error: 'PROFILE_ERROR', message: 'Failed to fetch user profile' });
+  }
+});
+
+/**
  * GET /api/diagnose
  * Returns raw Gmail API responses for debugging.
  */

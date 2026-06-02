@@ -1,9 +1,9 @@
 ---
 name: frontend-skills
-description: React frontend for Gmail Inbox Analyzer — Vite, React 19, Chart.js, react-router-dom, responsive CSS. Use when working on UI components, dashboard visualization, styling, routing, or client-side data fetching.
+description: React frontend for Gmail Mailbox Analyzer — Vite, React 19, Chart.js, react-router-dom, responsive CSS. Use when working on UI components, dashboard visualization, styling, routing, or client-side data fetching.
 ---
 
-# Frontend Skills — Gmail Inbox Analyzer
+# Frontend Skills — Gmail Mailbox Analyzer
 
 This file documents the React client (`client/`) for agents working on frontend code.
 

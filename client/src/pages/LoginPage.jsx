@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 
 const OAUTH_ERRORS = {
-  access_denied: 'You denied the authorization request. Please try again and click "Allow" to use Gmail Inbox Analyzer.',
+  access_denied: 'You denied the authorization request. Please try again and click "Allow" to use Gmail Mailbox Analyzer.',
   session_expired: 'Your authentication session expired. Please try logging in again.',
   callback_failed: 'Authentication failed. Please try again.',
 };
@@ -11,7 +11,7 @@ function CredentialsMissing() {
     <div className="login-page">
       <div className="login-card">
         <InboxIcon />
-        <h1>Inbox Analyzer</h1>
+        <h1>Mailbox Analyzer</h1>
         <div className="setup-instructions">
           <h2>Setup Required</h2>
           <p>
@@ -69,7 +69,7 @@ function Unauthenticated() {
     <div className="login-page">
       <div className="login-card">
         <InboxIcon />
-        <h1>Inbox Analyzer</h1>
+        <h1>Mailbox Analyzer</h1>
         <p className="login-description">
           Understand your inbox at a glance — which categories dominate, who your
           top senders are, and when emails arrive.

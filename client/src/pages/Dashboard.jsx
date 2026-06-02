@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchSummary, fetchSenders, fetchHeatmap, refreshData, logout } from '../api';
+import { fetchSummary, fetchSenders, fetchHeatmap, fetchProfile, refreshData, logout } from '../api';
 import { useTheme } from '../ThemeContext';
 import MetricCards from '../components/MetricCards';
 import CategoryChart from '../components/CategoryChart';
@@ -9,6 +9,7 @@ import ThemeToggle from '../components/ThemeToggle';
 
 function Dashboard({ onLogout }) {
   const { theme } = useTheme();
+  const [profile, setProfile] = useState(null);
   const [summary, setSummary] = useState(null);
   const [senders, setSenders] = useState(null);
   const [heatmap, setHeatmap] = useState(null);
@@ -19,11 +20,13 @@ function Dashboard({ onLogout }) {
   const loadData = useCallback(async () => {
     setError(null);
     try {
-      const [summaryData, sendersData, heatmapData] = await Promise.all([
+      const [profileData, summaryData, sendersData, heatmapData] = await Promise.all([
+        fetchProfile(),
         fetchSummary(),
         fetchSenders(),
         fetchHeatmap(),
       ]);
+      setProfile(profileData);
       setSummary(summaryData);
       setSenders(sendersData);
       setHeatmap(heatmapData);
@@ -91,21 +94,26 @@ function Dashboard({ onLogout }) {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-            <rect width="44" height="44" rx="10" fill="url(#dash)" fillOpacity="0.12" />
-            <rect x="0.5" y="0.5" width="43" height="43" rx="9.5" stroke="url(#dash)" strokeOpacity="0.25" />
-            <path d="M12 16C12 14.8954 12.8954 14 14 14H30C31.1046 14 32 14.8954 32 16V28C32 29.1046 31.1046 30 30 30H14C12.8954 30 12 29.1046 12 28V16Z" stroke="url(#dash)" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M12 22H18L20 25H24L26 22H32" stroke="url(#dash)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <defs>
-              <linearGradient id="dash" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#22d3ee" />
-                <stop offset="0.5" stopColor="#a78bfa" />
-                <stop offset="1" stopColor="#f472b6" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <h1>Inbox Analyzer</h1>
+        <div className="header-branding">
+          <div className="header-icon-title">
+            <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+              <rect width="44" height="44" rx="10" fill="url(#dash)" fillOpacity="0.12" />
+              <rect x="0.5" y="0.5" width="43" height="43" rx="9.5" stroke="url(#dash)" strokeOpacity="0.25" />
+              <rect x="9" y="15" width="26" height="17" rx="2" stroke="url(#dash)" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+              <path d="M9 17L22 26L35 17" stroke="url(#dash)" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              <defs>
+                <linearGradient id="dash" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#22d3ee" />
+                  <stop offset="0.5" stopColor="#a78bfa" />
+                  <stop offset="1" stopColor="#f472b6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <h1>Mailbox Analyzer</h1>
+          </div>
+          {profile?.emailAddress && (
+            <div className="header-account">{profile.emailAddress}</div>
+          )}
         </div>
         <div className="header-actions">
           <ThemeToggle />

@@ -29,7 +29,7 @@ function loadCredentials() {
     if (err.code === 'ENOENT') {
       const error = new Error(
         'credentials.json not found.\n\n' +
-        'To use Gmail Inbox Analyzer, you need to set up Google OAuth credentials:\n' +
+        'To use Gmail Mailbox Analyzer, you need to set up Google OAuth credentials:\n' +
         '1. Go to https://console.cloud.google.com\n' +
         '2. Create a project and enable the Gmail API\n' +
         '3. Create OAuth 2.0 credentials (Desktop App type)\n' +

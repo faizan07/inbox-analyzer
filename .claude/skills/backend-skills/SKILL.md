@@ -1,9 +1,9 @@
 ---
 name: backend-skills
-description: Backend server for Gmail Inbox Analyzer — Express, OAuth 2.0 PKCE, Gmail API integration, in-memory caching. Use when working on server-side code including auth flows, data endpoints, Gmail API calls, error handling, or API routes.
+description: Backend server for Gmail Mailbox Analyzer — Express, OAuth 2.0 PKCE, Gmail API integration, in-memory caching. Use when working on server-side code including auth flows, data endpoints, Gmail API calls, error handling, or API routes.
 ---
 
-# Backend Skills — Gmail Inbox Analyzer
+# Backend Skills — Gmail Mailbox Analyzer
 
 This file documents the Express backend (`server/`) for agents working on server-side code.
 

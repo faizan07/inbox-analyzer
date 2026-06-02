@@ -34,14 +34,16 @@ React SPA (Vite, port 5173)  ←→  Express API (port 3000)  ←→  Gmail API 
 ### Client (`client/`)
 - **SPA with react-router-dom** — `/` (Dashboard) and `/login` (LoginPage).
 - **`api.js`** — fetch wrapper that handles 401 → redirect and 503 → error propagation.
-- **Components**: `MetricCards`, `CategoryChart`, `TopSenders`, `ActivityHeatmap` — all with loading skeletons, empty states, and error handling.
-- **`index.css`** — CSS custom properties for all design tokens; responsive layout at 900px and 500px breakpoints; skeleton shimmer animation.
+- **`ThemeContext.jsx`** — React context providing `theme` and `toggleTheme`, persists choice to `localStorage`, sets `data-theme` attribute on `<html>` for CSS-driven theming.
+- **Components**: `MetricCards`, `CategoryChart`, `TopSenders`, `ActivityHeatmap`, `ThemeToggle` — all with loading skeletons, empty states, and error handling.
+- **`index.css`** — Glassmorphism design system (dark default + light overrides via `[data-theme="light"]`): frosted glass surfaces with `backdrop-filter`, animated gradient background, CSS custom properties for all design tokens. Responsive at 1100px, 900px, and 600px breakpoints. Smooth 500ms transitions on all themeable properties.
 - **`vite.config.js`** — proxies `/auth`, `/oauth2callback`, `/api` to the Express backend on port 3000.
 
 ### Key design decisions
 - PKCE OAuth with state in httpOnly cookie (no express-session dependency).
 - Category analysis uses Gmail's system labels (`CATEGORY_PROMOTIONS`, `CATEGORY_SOCIAL`, etc.). Clutter = total minus Primary.
-- Heatmap is pure CSS Grid (no chartjs-matrix dependency).
+- Heatmap is pure CSS Grid (no chartjs-matrix dependency). Uses magma-inspired color palette (deep purple → violet → pink → amber) defined via CSS custom properties, interpolated in JS with per-theme alpha curves for adaptive dark/light rendering.
+- Theme system uses a React context + CSS custom properties + `[data-theme]` attribute: toggling updates ~50 CSS variables and triggers smooth crossfades. Charts re-render with theme-aware colors, tooltips, and grid lines.
 - No TypeScript, ESLint, or testing infrastructure.
 
 ## Environment

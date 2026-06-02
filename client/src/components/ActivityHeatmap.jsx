@@ -41,6 +41,13 @@ const ALPHA_CURVES = {
 };
 
 /* ── Component ──────────────────────────────────────────────────── */
+
+/**
+ * Which hour indices get a label in the GitHub-style header.
+ * Shows every 3rd hour: 12a, 3a, 6a, 9a, 12p, 3p, 6p, 9p
+ */
+const LABELED_HOURS = new Set([0, 3, 6, 9, 12, 15, 18, 21]);
+
 function ActivityHeatmap({ data, loading }) {
   const { theme } = useTheme();
 
@@ -61,10 +68,10 @@ function ActivityHeatmap({ data, loading }) {
   }, [theme]);
 
   /* Interpolate between adjacent colour stops + alpha curve.        */
-  function getColor(value) {
-    if (maxValue === 0 || value === 0) return 'transparent';
+  function getColor(value, maxVal) {
+    if (maxVal === 0 || value === 0) return 'transparent';
 
-    const intensity = value / maxValue;
+    const intensity = value / maxVal;
     const alphas = ALPHA_CURVES[theme] ?? ALPHA_CURVES.dark;
     const maxIdx = colorStops.length - 1;
 
@@ -87,15 +94,15 @@ function ActivityHeatmap({ data, loading }) {
     return (
       <section className="chart-panel heatmap-panel">
         <h2>Activity Heatmap</h2>
-        <div className="heatmap-container">
-          {Array.from({ length: 6 }, (_, i) => (
-            <div className="heatmap-row" key={i}>
-              <div className="skeleton" style={{ width: 36, height: 14 }} />
-              {Array.from({ length: 7 }, (_, j) => (
+        <div className="heatmap-container gh">
+          {Array.from({ length: 7 }, (_, i) => (
+            <div className="heatmap-row gh" key={i}>
+              <div className="heatmap-day-label gh" />
+              {Array.from({ length: 24 }, (_, j) => (
                 <div
                   key={j}
                   className="skeleton"
-                  style={{ width: 30, height: 30, borderRadius: 4 }}
+                  style={{ width: 26, height: 26, borderRadius: 3 }}
                 />
               ))}
             </div>
@@ -120,6 +127,16 @@ function ActivityHeatmap({ data, loading }) {
   const { heatmap, maxValue, labels } = data;
   const allZero = heatmap.every((row) => row.every((cell) => cell === 0));
 
+  // Build sparse header: show hour label every 3 hours, empty spacer otherwise
+  const headerCells = labels.hours.map((label, h) => (
+    <div
+      className={`heatmap-header-cell${LABELED_HOURS.has(h) ? '' : ' empty'}`}
+      key={h}
+    >
+      {LABELED_HOURS.has(h) ? label : ''}
+    </div>
+  ));
+
   return (
     <section className="chart-panel heatmap-panel">
       <h2>Activity Heatmap</h2>
@@ -128,35 +145,36 @@ function ActivityHeatmap({ data, loading }) {
           <p className="empty-state">No email activity in the selected period</p>
         </div>
       ) : (
-        <div className="heatmap-wrapper">
-          <div className="heatmap-container">
-            {/* Header row with day labels */}
-            <div className="heatmap-header">
-              <div className="heatmap-corner" />
-              {labels.days.map((day) => (
-                <div className="heatmap-day-label" key={day}>
-                  {day}
+        <div className="heatmap-wrapper gh">
+          <div className="heatmap-scroll">
+            <div className="heatmap-container gh">
+              {/* Header row: sparse hour labels (GitHub-style) */}
+              <div className="heatmap-header gh">
+                <div className="heatmap-corner gh" />
+                {headerCells}
+              </div>
+              {/* Data rows: one per day, 24 hour cells each */}
+              {labels.days.map((day, dayIdx) => (
+                <div className="heatmap-row gh" key={day}>
+                  <div className="heatmap-day-label gh">{day}</div>
+                  {Array.from({ length: 24 }, (_, hour) => {
+                    const value = heatmap[hour]?.[dayIdx] ?? 0;
+                    return (
+                      <div
+                        className="heatmap-cell gh"
+                        key={hour}
+                        style={{ backgroundColor: getColor(value, maxValue) }}
+                        title={`${day} ${labels.hours[hour]}: ${value} email${value !== 1 ? 's' : ''}`}
+                      >
+                        {value > 0 && maxValue > 0 && value / maxValue > 0.5 && (
+                          <span className="heatmap-cell-value">{value}</span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
-            {/* Data rows */}
-            {heatmap.map((row, hour) => (
-              <div className="heatmap-row" key={hour}>
-                <div className="heatmap-hour-label">{labels.hours[hour]}</div>
-                {row.map((value, day) => (
-                  <div
-                    className="heatmap-cell"
-                    key={`${hour}-${day}`}
-                    style={{ backgroundColor: getColor(value) }}
-                    title={`${labels.days[day]} ${labels.hours[hour]}: ${value} email${value !== 1 ? 's' : ''}`}
-                  >
-                    {value > 0 && maxValue > 0 && value / maxValue > 0.45 && (
-                      <span className="heatmap-cell-value">{value}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
           </div>
           {/* Color scale legend */}
           <div className="heatmap-legend">

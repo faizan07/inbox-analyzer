@@ -43,6 +43,10 @@ export function fetchHeatmap() {
   return request('/api/heatmap');
 }
 
+export function fetchProfile() {
+  return request('/api/profile');
+}
+
 export function refreshData() {
   return request('/api/refresh');
 }

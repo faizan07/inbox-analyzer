@@ -14,7 +14,7 @@ No test runner, linter, or formatter is configured in this project.
 
 ## Project Overview
 
-**Gmail Inbox Analyzer** — a local web app (v1) that connects to Gmail via OAuth 2.0 and visualizes inbox metadata (senders, categories, activity patterns) with donut/bar charts, a sender leaderboard, and a 24x7 heatmap. Read-only; no email bodies are fetched or stored.
+**Gmail Mailbox Analyzer** — a local web app (v1) that connects to Gmail via OAuth 2.0 and visualizes inbox metadata (senders, categories, activity patterns) with donut/bar charts, a sender leaderboard, and a GitHub-inspired 7×24 activity heatmap. Read-only; no email bodies are fetched or stored.
 
 ## Architecture
 
@@ -27,21 +27,24 @@ React SPA (Vite, port 5173)  ←→  Express API (port 3000)  ←→  Gmail API 
 ### Server (`server/`)
 - **`index.js`** — Express entry point, mounts route groups, serves `client/dist/` in production.
 - **`auth.js`** — OAuth 2.0 with PKCE. Reads `credentials.json` from project root, stores tokens at `~/.gmail-analyzer/token.json` (outside repo).
-- **`gmail.js`** — Gmail API calls with in-memory request coalescing (concurrent callers share one in-flight fetch) and exponential backoff on 429s. Core exports: `fetchSummary()`, `fetchSenders()`, `fetchHeatmap()`, `refreshData()`.
-- **`routes/auth.routes.js`** — `/auth/login`, `/oauth2callback`, `/auth/status`, `/auth/logout`.
-- **`routes/data.routes.js`** — `/api/summary`, `/api/senders`, `/api/heatmap`, `/api/refresh`, `/api/diagnose`. All gated by `requireAuth` middleware.
+- **`gmail.js`** — Gmail API calls with in-memory request coalescing (concurrent callers share one in-flight fetch) and exponential backoff on 429s. Core exports: `fetchSummary()`, `fetchSenders()`, `fetchHeatmap()`, `refreshData()`, `clearCache()`.
+- **`routes/auth.routes.js`** — `/auth/login`, `/oauth2callback`, `/auth/status`, `/auth/logout`. Clears data cache on logout and new login to prevent stale account data.
+- **`routes/data.routes.js`** — `/api/summary`, `/api/senders`, `/api/heatmap`, `/api/refresh`, `/api/profile`, `/api/diagnose`. All gated by `requireAuth` middleware.
 
 ### Client (`client/`)
 - **SPA with react-router-dom** — `/` (Dashboard) and `/login` (LoginPage).
-- **`api.js`** — fetch wrapper that handles 401 → redirect and 503 → error propagation.
-- **Components**: `MetricCards`, `CategoryChart`, `TopSenders`, `ActivityHeatmap` — all with loading skeletons, empty states, and error handling.
-- **`index.css`** — CSS custom properties for all design tokens; responsive layout at 900px and 500px breakpoints; skeleton shimmer animation.
+- **`api.js`** — fetch wrapper that handles 401 → redirect and 503 → error propagation. Exports `fetchProfile()` for the account holder endpoint.
+- **`ThemeContext.jsx`** — React context providing `theme` and `toggleTheme`, persists choice to `localStorage`, sets `data-theme` attribute on `<html>` for CSS-driven theming.
+- **Components**: `MetricCards`, `CategoryChart`, `TopSenders`, `ActivityHeatmap`, `ThemeToggle` — all with loading skeletons, empty states, and error handling.
+- **Dashboard** shows the authenticated account holder's email in the header alongside a mailbox SVG icon.
+- **`index.css`** — Glassmorphism design system (dark default + light overrides via `[data-theme="light"]`): frosted glass surfaces with `backdrop-filter`, animated gradient background, CSS custom properties for all design tokens. Responsive at 1100px, 900px, and 600px breakpoints. Smooth 500ms transitions on all themeable properties.
 - **`vite.config.js`** — proxies `/auth`, `/oauth2callback`, `/api` to the Express backend on port 3000.
 
 ### Key design decisions
 - PKCE OAuth with state in httpOnly cookie (no express-session dependency).
 - Category analysis uses Gmail's system labels (`CATEGORY_PROMOTIONS`, `CATEGORY_SOCIAL`, etc.). Clutter = total minus Primary.
-- Heatmap is pure CSS Grid (no chartjs-matrix dependency).
+- Heatmap is pure CSS Grid (no chartjs-matrix dependency). GitHub-inspired layout with days as rows and 24 hour columns (sparse labels every 3 hours). Uses magma-inspired color palette (deep purple → pink → amber) defined via CSS custom properties, interpolated in JS with per-theme alpha curves and subtle cell borders.
+- Theme system uses a React context + CSS custom properties + `[data-theme]` attribute: toggling updates ~50 CSS variables and triggers smooth crossfades. Charts re-render with theme-aware colors, tooltips, and grid lines.
 - No TypeScript, ESLint, or testing infrastructure.
 
 ## Environment

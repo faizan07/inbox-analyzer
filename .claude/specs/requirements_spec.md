@@ -1,4 +1,4 @@
-# Gmail Inbox Analyzer — Requirements Specification
+# Gmail Mailbox Analyzer — Requirements Specification
 
 **Version:** 1.0  
 **Status:** Draft  
@@ -8,7 +8,7 @@
 
 ## 1. Overview
 
-Gmail Inbox Analyzer is a locally-run web application that connects to a user's Gmail account via OAuth 2.0 and provides a visual dashboard to understand inbox composition — which categories dominate, who the top senders are, and when emails arrive. The goal of v1 is purely analytical (read-only). Future versions will introduce action capabilities such as bulk delete, unsubscribe, and sender blocking.
+Gmail Mailbox Analyzer is a locally-run web application that connects to a user's Gmail account via OAuth 2.0 and provides a visual dashboard to understand inbox composition — which categories dominate, who the top senders are, and when emails arrive. The goal of v1 is purely analytical (read-only). Future versions will introduce action capabilities such as bulk delete, unsubscribe, and sender blocking.
 
 ---
 

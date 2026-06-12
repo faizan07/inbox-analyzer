@@ -1,4 +1,4 @@
-# Gmail Inbox Analyzer
+# Gmail Mailbox Analyzer
 
 A locally-run web application that connects to your Gmail account via OAuth 2.0 and provides a visual dashboard to understand your inbox composition — which categories dominate, who the top senders are, and when emails arrive.
 
@@ -11,7 +11,7 @@ A locally-run web application that connects to your Gmail account via OAuth 2.0 
 - **OAuth 2.0 authentication** — Secure login via Google, with PKCE and automatic token refresh
 - **Category breakdown** — Donut and bar charts showing Promotions, Social, Updates, Forums, Spam, and Primary
 - **Top senders** — Ranked list of who emails you most, with category badges and proportional bars
-- **Activity heatmap** — 24×7 grid showing when emails arrive (hour × day of week)
+- **Activity heatmap** — GitHub-inspired 7×24 grid showing when emails arrive (day of week × hour)
 - **Privacy-first** — Runs entirely on localhost. No data leaves your machine
 
 ## Prerequisites
@@ -38,7 +38,7 @@ npm install
    - Go to **APIs & Services** → **Credentials**
    - Click **Create Credentials** → **OAuth 2.0 Client ID**
    - Application type: **Desktop App**
-   - Name: `Gmail Inbox Analyzer` (or any name)
+   - Name: `Gmail Mailbox Analyzer` (or any name)
    - Click **Create**
 5. Download the JSON file
 6. Rename it to `credentials.json` and place it in the project root directory
@@ -121,6 +121,7 @@ inbox-analyzer/
 | GET | `/api/summary` | Label counts and clutter summary |
 | GET | `/api/senders` | Top senders with counts |
 | GET | `/api/heatmap` | 24×7 activity heatmap |
+| GET | `/api/profile` | Authenticated user's email address |
 | GET | `/api/refresh` | Force re-fetch from Gmail |
 
 ## Roadmap
@@ -145,7 +146,7 @@ The OAuth flow has a 5-minute window. Try logging in again.
 The server retries up to 3 times with exponential backoff. If you see this error, wait a moment and try refreshing.
 
 ### Dashboard shows stale data
-Click the **Refresh Data** button to re-fetch from Gmail.
+The in-memory cache is automatically cleared on logout and new login. If data still appears stale, click the **Refresh Data** button to force a re-fetch from Gmail.
 
 ## Privacy
 

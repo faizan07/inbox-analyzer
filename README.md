@@ -4,6 +4,8 @@ A locally-run web application that connects to your Gmail account via OAuth 2.0 
 
 **v1 is read-only.** Only email metadata (sender, date, category) is analyzed. No email content is ever read or stored.
 
+![Gmail Mailbox Analyzer Dashboard](inbox-analyzer.png)
+
 ## Features
 
 - **OAuth 2.0 authentication** — Secure login via Google, with PKCE and automatic token refresh

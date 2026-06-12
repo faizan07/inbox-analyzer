@@ -13,33 +13,56 @@ const TOKEN_DIR = path.join(os.homedir(), '.gmail-analyzer');
 const TOKEN_PATH = path.join(TOKEN_DIR, 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
-const REDIRECT_URI = 'http://localhost:3000/oauth2callback';
+// Redirect URI: env var → APP_URL + /oauth2callback → localhost fallback
+const REDIRECT_URI = process.env.REDIRECT_URI
+  || (process.env.APP_URL ? `${process.env.APP_URL.replace(/\/+$/, '')}/oauth2callback` : null)
+  || 'http://localhost:3000/oauth2callback';
 
 // In-memory store for PKCE code verifiers (keyed by a state param)
 const verifierStore = new Map();
 
 /**
- * Load credentials from credentials.json.
+ * Load credentials from credentials.json or environment variables.
+ * Priority: 1) credentials.json file, 2) GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET env vars
  */
 function loadCredentials() {
+  // First try: credentials.json file
   try {
     const content = fs.readFileSync(CREDENTIALS_PATH, 'utf8');
     return JSON.parse(content);
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      const error = new Error(
-        'credentials.json not found.\n\n' +
-        'To use Gmail Mailbox Analyzer, you need to set up Google OAuth credentials:\n' +
-        '1. Go to https://console.cloud.google.com\n' +
-        '2. Create a project and enable the Gmail API\n' +
-        '3. Create OAuth 2.0 credentials (Desktop App type)\n' +
-        '4. Download the JSON file and save it as "credentials.json" in the project root\n'
-      );
-      error.code = 'CREDENTIALS_MISSING';
-      throw error;
+    if (err.code !== 'ENOENT') {
+      throw new Error(`Failed to read credentials.json: ${err.message}`);
     }
-    throw new Error(`Failed to read credentials.json: ${err.message}`);
+    // File not found — fall through to env var check
   }
+
+  // Second try: environment variables (for AWS deployment)
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (clientId && clientSecret) {
+    return {
+      installed: {
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uris: [REDIRECT_URI],
+        auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+        token_uri: 'https://oauth2.googleapis.com/token',
+      },
+    };
+  }
+
+  // Neither source available — provide helpful error
+  const error = new Error(
+    'Google OAuth credentials not found.\n\n' +
+    'To use Gmail Mailbox Analyzer, provide credentials via one of:\n' +
+    '  1. Download credentials.json from Google Cloud Console and save it in the project root\n' +
+    '  2. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables\n\n' +
+    'See: https://console.cloud.google.com/apis/credentials'
+  );
+  error.code = 'CREDENTIALS_MISSING';
+  throw error;
 }
 
 /**

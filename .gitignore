@@ -3,3 +3,7 @@ credentials.json
 .env
 client/dist/
 token.json
+.claude/
+test.md
+infra/
+
